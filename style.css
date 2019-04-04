@@ -1,15 +1,18 @@
 * {
+	background-color: black;
 	box-sizing: border-box;
+	color: white;
 	font-family: Arial;
 }
 
 .main {
-	margin: 50px auto;
-	position: relative;
+    border-radius: 10px;
+	margin: 1% 20%;
+	position: absolute;
 	overflow: hidden;
 	width: 500px;
 	height: 700px;
-	border: 1px solid #000;
+	border: 4px solid #fff;
 }
 
 .tetris {
@@ -20,15 +23,71 @@
 	flex-wrap: wrap;
 	position: absolute;
 	bottom: 0;
-	background-color: #fff;
 }
 
 .excel {
 	width: 50px;
 	height: 50px;
-	border: 1px solid #ccc;
+
 }
 
 .figure, .set {
-	background-color: #1e488c;
+    box-shadow: inset 0 0 4px;
+    border-radius: 10%;
+}
+
+.color1 {background: linear-gradient(to right top, #eae2ec, #9410b5); } /* фиолетовый */
+.color2 {background: linear-gradient(to right top, #dedcea, #2700ff); } /* синий */
+.color3 {background: linear-gradient(to right top, #e1eae2, #218e0d); } /* зеленый */
+.color4 {background: linear-gradient(to right top, #e1eae2, #bb0202); } /* красный */
+.color5 {background: linear-gradient(to right top, #d0d0d0, #00b9b9); } /* бирюзовый */
+.color6 {background: linear-gradient(to right top, #f7e2cc, #ff8d00); } /* оранжевый */
+.color7 {background: linear-gradient(to right top, #ffffff, #fbff00); } /* фиолетовый */
+
+input {
+    font: 24pt sans-serif;
+    border-radius: 15px;
+    width: 200px;
+    height: 70px;
+    text-align: center;
+    margin: 20px;
+}
+
+.info {
+	float: right;
+    margin: 1% 20%;
+	text-align: center;
+    border-radius: 15px;
+    border: 2px solid white;
+    width: 300px;
+}
+
+.figureNext {
+    margin: 20px auto;
+    width: 200px;
+    height: 200px;
+    display: flex;
+    overflow: hidden;
+    flex-wrap: wrap;
+}
+.smallExcel {
+	width: 50px;
+	height: 50px;
+
+}
+input#start {
+    position: absolute;
+    margin: 23% 32%;
+    z-index: 100;
+}
+
+.level {
+    border: 0;
+    border-radius: 0;
+    width: 25px;
+    height: 25px;
+}
+
+li {
+    text-align: start;
 }

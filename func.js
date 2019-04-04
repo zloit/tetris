@@ -12,7 +12,6 @@ for (let i = 1; i < 181; i++) {   // Заполняем tetris 180 ячейка�
 let main = document.getElementsByClassName("main")[0];
 main.appendChild(tetris); // Помещаем tetris в код страницы
 
-
 let excel = document.getElementsByClassName('excel');
 let i = 0;
  
@@ -24,8 +23,29 @@ for (let y = 18; y > 0; y--) { // Присваиваем координаты к
 	}
 }
 
-let x=5, y=15;  	//В этой точке создаются фигуры (выше видимой зоны)
+let figureNext = document.createElement("div"); //Создаём блок 
+figureNext.classList.add("figureNext"); // Присваиваем ему класс 
 
+for (let i = 1; i < 17; i++) {   // Заполняем 180 ячейками с классом excel
+  let demoExcel = document.createElement("div");
+  demoExcel.classList.add("excel");
+  figureNext.appendChild(demoExcel);	 
+}
+
+
+let field = document.getElementsByClassName("preview")[0];
+field.appendChild(figureNext); // Помещаем в код страницы
+
+for (let y = 4; y > 0; y--) { // Присваиваем координаты каждой ячейке(точка 1,1 - левый нижний угол)
+	for (let x = 1; x < 5; x++) {
+		excel[i].setAttribute('posH',x);
+		excel[i].setAttribute('posV',y);
+		i++;
+	}
+}
+
+
+let x=5, y=15;  	//В этой точке создаются фигуры (выше видимой зоны)
 let mainArr = [  	// Задаём фигуры 
 	// I (прямая)
 	[
@@ -271,16 +291,31 @@ let mainArr = [  	// Задаём фигуры
 ]
 
 let currentFigure = 0;
+let nextFigure = getRandom();
 let figureBody = 0;
+let nextFigureBody = 0;
 let rotate = 1;
+let level = 1;
+let speed = 500;
+let interval;
 
-function create () { //Функция создания фигуры
-	function getRandom() { // Случайным образом получаем номер фигуры
+let recordList = document.getElementsByTagName('ol')[0];
+let li=document.createElement('li');
+let levelMonitor = document.getElementsByTagName('input')[2];
+levelMonitor.value=level;
+function getRandom() { // Случайным образом получаем номер фигуры
 		return Math.round(Math.random()*(mainArr.length-1))
 	}
 
+function create () { //Функция создания фигуры
+
+	for (let i = 0; i < nextFigureBody.length; i++) { // Присваиваем класс, закрашивая фигуру
+		nextFigureBody[i].classList.remove(`color${nextFigure+1}`,'set');
+	}
+
 	rotate = 1;
-	currentFigure = getRandom(); // Текущая фигура
+	currentFigure = nextFigure; // Текущая фигура
+	nextFigure = getRandom();
 
 	figureBody = [	// Строим фигуру на поле
 		document.querySelector(`[posX = "${x}"][posY = "${y}"]`),
@@ -289,17 +324,21 @@ function create () { //Функция создания фигуры
 		document.querySelector(`[posX = "${x + mainArr[currentFigure][2][0]}"][posY = "${y + mainArr[currentFigure][2][1]}"]`)
 	]
 
-
 	for (let i = 0; i < figureBody.length; i++) { // Присваиваем класс, закрашивая фигуру
-		figureBody[i].classList.add('figure'); 
+		figureBody[i].classList.add(`color${currentFigure+1}`,'figure');
 	}
+
+
+
 }
 
 let score = 0;
-let input = document.getElementsByTagName('input')[0];
-input.value = `Ваши очки: ${score}`;
+let input = document.getElementsByTagName('input')[1];
+input.value = score;
 
 create(); 
+
+createPreview ();
 
 function move() { // Функция сдвига фигуры на 1 клетку вниз
 	let moveFlag = true;
@@ -320,7 +359,7 @@ function move() { // Функция сдвига фигуры на 1 клетк�
 
 	if (moveFlag) {
 		for (let i = 0; i < figureBody.length; i++) {
-			figureBody[i].classList.remove('figure');  // Убираем стили у старых точек фигуры
+			figureBody[i].classList.remove(`color${currentFigure+1}`,'figure');  // Убираем стили у старых точек фигуры
 		}
 		figureBody = [ //Присваиваем фигуры новые координаты (сдвиг вниз)
 			document.querySelector(`[posX ="${coordinates[0][0]}"][posY ="${coordinates[0][1]-1}"]`),
@@ -329,62 +368,95 @@ function move() { // Функция сдвига фигуры на 1 клетк�
 			document.querySelector(`[posX ="${coordinates[3][0]}"][posY ="${coordinates[3][1]-1}"]`)
 		]
 		for (let i = 0; i < figureBody.length; i++) {
-			figureBody[i].classList.add('figure'); // Добавляем стили к новой фигуре
+			figureBody[i].classList.add(`color${currentFigure+1}`,'figure'); // Добавляем стили к новой фигуре
 		}
 	} else {
 		for (let i = 0; i < figureBody.length; i++) { // При остановке фигуры меняем ей класс figure на set.
 			figureBody[i].classList.remove('figure'); 
 			figureBody[i].classList.add('set');
 		}
-
+		// Проверка заполненности ряда и сдвиг его вниз
 		for (let i = 1; i < 15; i++) {
 			let count = 0;
 			for (let k = 1; k < 11; k++) {
 				if (document.querySelector(`[posX = "${k}"][posY = "${i}"]`).classList.contains('set')){
 					count++;
 					if (count==10) {
-						score+=10;
-						input.value = `Ваши очки: ${score}`;
+						score+=level;
+						input.value = score;
 						for (let m = 1; m < 11 ; m++) {
 							document.querySelector(`[posX = "${m}"][posY = "${i}"]`).classList.remove('set');
 						}
+						for (let t=1;t<8;t++) {
+							let set = document.querySelectorAll(`.color${t}`);
+							let newSet = [];
+							for (let s = 0; s < set.length; s++) {
+								let setCoordinates = [set[s].getAttribute('posX'),set[s].getAttribute('posY')];
 
-						let set = document.querySelectorAll('.set');
-
-						let newSet = [];
-						for (let s = 0; s < set.length; s++) {
-							let setCoordinates = [set[s].getAttribute('posX'),set[s].getAttribute('posY')];
-
-							if (setCoordinates[1] > i) {
-								set[s].classList.remove('set');
-								newSet.push(document.querySelector(`[posX = "${setCoordinates[0]}"][posY = "${setCoordinates[1]-1}"]`))
+								if (setCoordinates[1] > i) {
+									set[s].classList.remove(`color${t}`);
+									let contains = false;
+									for (e=1;e<8;e++) {
+										if (e==t) {continue;}
+										else {
+											if (set[s].classList.contains(`color${e}`)) contains=true;
+										}
+									}
+									if (!contains) set[s].classList.remove('set');
+									newSet.push(document.querySelector(`[posX = "${setCoordinates[0]}"][posY = "${setCoordinates[1]-1}"]`))
+								} else if (setCoordinates[1] == i) set[s].classList.remove(`color${t}`);
 							}
-						}
 
-						for (let a = 0; a < newSet.length; a++) {
-							newSet[a].classList.add('set');
+							for (let a = 0; a < newSet.length; a++) {
+								newSet[a].classList.add('set',`color${t}`);
 
+							}
 						}
 						i--;
 					}
 				}
 			}
 		}
-
 		for (let n = 1; n < 11; n ++) {
 			if (document.querySelector(`[posX = "${n}"][posY = "15"]`).classList.contains('set')) {
 				clearInterval(interval);
-
+				recordList.appendChild(li);
+				li.innerHTML = score;
 				alert(`Игра окончена со счетом: ${score}`);
 				break;
 			}
 		}
-
+	if ((score>40)&&(level<2)) {
+		level=2;
+		speed=400;
+		clearInterval(interval);
+		interval = setInterval(move,speed);
+		levelMonitor.value=level;
+	} else if ((score>100)&&(level<3)) {
+		level=3;
+		speed=350;
+		clearInterval(interval);
+		interval = setInterval(move,speed);
+		levelMonitor.value=level;
+	} else if ((score>200)&&(level<4)) {
+		level=4;
+		speed=300;
+		clearInterval(interval);
+		interval = setInterval(move,speed);
+		levelMonitor.value=level;
+	} else if ((score>400)&&(level<5)) {
+		level=5;
+		speed=250;
+		clearInterval(interval);
+		interval = setInterval(move,speed);
+		levelMonitor.value=level;
+	}
 		create(); // Как только фигура остановилась, создается новая
+		createPreview ();
 	}
 }
 
-let interval = setInterval(() => {move();}, 500); // Стрелочная функция, аналогична: setInterval(move,300);
+
 
 
 let flag = true;
@@ -417,13 +489,14 @@ window.addEventListener('keydown', function(e) { // Обработчик соб�
 
 		if (flag == true) {
 			for (let i = 0; i < figureBody.length; i++) {
-				figureBody[i].classList.remove('figure'); // Убираем стили старых точек
+				figureBody[i].classList.remove(`color${currentFigure+1}`,'figure'); // Убираем стили старых точек
+				figureBody[i].style.backgroundColor = '';
 			}	
 
 			figureBody = figureNew;
 
 			for (let i = 0; i < figureBody.length; i++) {
-				figureBody[i].classList.add('figure'); // Даем стили новых точек
+				figureBody[i].classList.add(`color${currentFigure+1}`,'figure'); // Даем стили новых точек
 			}	
 		}
 	}
@@ -453,13 +526,14 @@ window.addEventListener('keydown', function(e) { // Обработчик соб�
 
 		if (flag == true) {
 			for (let i = 0; i < figureBody.length; i++) {
-				figureBody[i].classList.remove('figure'); // Убираем стили старых точек
+				figureBody[i].classList.remove(`color${currentFigure+1}`,'figure'); // Убираем стили старых точек
+
 			}	
 
 			figureBody = figureNew;
 
 			for (let i = 0; i < figureBody.length; i++) {
-				figureBody[i].classList.add('figure'); // Даем стили новых точек
+				figureBody[i].classList.add(`color${currentFigure+1}`,'figure'); // Даем стили новых точек
 			}	
 
 			if (rotate<4) {rotate++;}
@@ -468,3 +542,27 @@ window.addEventListener('keydown', function(e) { // Обработчик соб�
 	}
 
 })
+
+
+function createPreview () { //Функция создания фигуры
+
+
+	nextFigureBody = [	// Строим фигуру на поле
+		document.querySelector(`[posH = "2"][posV = "1"]`),
+		document.querySelector(`[posH = "${2 + mainArr[nextFigure][0][0]}"][posV = "${1 + mainArr[nextFigure][0][1]}"]`),
+		document.querySelector(`[posH = "${2 + mainArr[nextFigure][1][0]}"][posV = "${1 + mainArr[nextFigure][1][1]}"]`),
+		document.querySelector(`[posH = "${2 + mainArr[nextFigure][2][0]}"][posV = "${1 + mainArr[nextFigure][2][1]}"]`)
+	]
+
+
+	for (let i = 0; i < nextFigureBody.length; i++) { // Присваиваем класс, закрашивая фигуру
+		nextFigureBody[i].classList.add(`color${nextFigure+1}`,'set');
+	}
+}
+
+function start() {
+	create(); 
+	createPreview ();
+	interval = setInterval(move,speed);
+	document.getElementsByTagName('input')[0].style.display = 'none';
+}
