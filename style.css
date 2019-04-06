@@ -31,18 +31,20 @@
 
 }
 
-.figure, .set {
+.figure, .set, .figureicon {
     box-shadow: inset 0 0 4px;
+	color: black;
     border-radius: 10%;
 }
 
-.color1 {background: linear-gradient(to right top, #eae2ec, #9410b5); } /* фиолетовый */
+.color0 {background: linear-gradient(to right top, #eae2ec, #9410b5); } /* фиолетовый */
+.color1 {background: linear-gradient(to right top, #ffffff, #fbff00); } /* желтый */
 .color2 {background: linear-gradient(to right top, #dedcea, #2700ff); } /* синий */
 .color3 {background: linear-gradient(to right top, #e1eae2, #218e0d); } /* зеленый */
 .color4 {background: linear-gradient(to right top, #e1eae2, #bb0202); } /* красный */
 .color5 {background: linear-gradient(to right top, #d0d0d0, #00b9b9); } /* бирюзовый */
 .color6 {background: linear-gradient(to right top, #f7e2cc, #ff8d00); } /* оранжевый */
-.color7 {background: linear-gradient(to right top, #ffffff, #fbff00); } /* фиолетовый */
+
 
 input {
     font: 24pt sans-serif;

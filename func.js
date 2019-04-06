@@ -309,8 +309,8 @@ function getRandom() { // Случайным образом получаем н�
 
 function create () { //Функция создания фигуры
 
-	for (let i = 0; i < nextFigureBody.length; i++) { // Присваиваем класс, закрашивая фигуру
-		nextFigureBody[i].classList.remove(`color${nextFigure+1}`,'set');
+	for (let i = 0; i < nextFigureBody.length; i++) { 
+		nextFigureBody[i].classList.remove('figureicon',`color${nextFigure}`);
 	}
 
 	rotate = 1;
@@ -325,7 +325,8 @@ function create () { //Функция создания фигуры
 	]
 
 	for (let i = 0; i < figureBody.length; i++) { // Присваиваем класс, закрашивая фигуру
-		figureBody[i].classList.add(`color${currentFigure+1}`,'figure');
+		figureBody[i].classList.add('figure',`color${currentFigure}`);
+		figureBody[i].setAttribute('color',currentFigure);
 	}
 
 
@@ -359,7 +360,8 @@ function move() { // Функция сдвига фигуры на 1 клетк�
 
 	if (moveFlag) {
 		for (let i = 0; i < figureBody.length; i++) {
-			figureBody[i].classList.remove(`color${currentFigure+1}`,'figure');  // Убираем стили у старых точек фигуры
+			figureBody[i].classList.remove('figure',`color${currentFigure}`);  // Убираем стили у старых точек фигуры
+			figureBody[i].removeAttribute('color');
 		}
 		figureBody = [ //Присваиваем фигуры новые координаты (сдвиг вниз)
 			document.querySelector(`[posX ="${coordinates[0][0]}"][posY ="${coordinates[0][1]-1}"]`),
@@ -368,7 +370,8 @@ function move() { // Функция сдвига фигуры на 1 клетк�
 			document.querySelector(`[posX ="${coordinates[3][0]}"][posY ="${coordinates[3][1]-1}"]`)
 		]
 		for (let i = 0; i < figureBody.length; i++) {
-			figureBody[i].classList.add(`color${currentFigure+1}`,'figure'); // Добавляем стили к новой фигуре
+			figureBody[i].classList.add('figure',`color${currentFigure}`); // Добавляем стили к новой фигуре
+			figureBody[i].setAttribute('color',currentFigure);
 		}
 	} else {
 		for (let i = 0; i < figureBody.length; i++) { // При остановке фигуры меняем ей класс figure на set.
@@ -376,47 +379,39 @@ function move() { // Функция сдвига фигуры на 1 клетк�
 			figureBody[i].classList.add('set');
 		}
 		// Проверка заполненности ряда и сдвиг его вниз
+		let multiplier = 1;
 		for (let i = 1; i < 15; i++) {
 			let count = 0;
 			for (let k = 1; k < 11; k++) {
 				if (document.querySelector(`[posX = "${k}"][posY = "${i}"]`).classList.contains('set')){
 					count++;
 					if (count==10) {
-						score+=level;
+						score+=multiplier*level;
 						input.value = score;
+						multiplier++;
 						for (let m = 1; m < 11 ; m++) {
-							document.querySelector(`[posX = "${m}"][posY = "${i}"]`).classList.remove('set');
+							document.querySelector(`[posX = "${m}"][posY = "${i}"]`).className='excel';
 						}
-						for (let t=1;t<8;t++) {
-							let set = document.querySelectorAll(`.color${t}`);
-							let newSet = [];
-							for (let s = 0; s < set.length; s++) {
-								let setCoordinates = [set[s].getAttribute('posX'),set[s].getAttribute('posY')];
 
-								if (setCoordinates[1] > i) {
-									set[s].classList.remove(`color${t}`);
-									let contains = false;
-									for (e=1;e<8;e++) {
-										if (e==t) {continue;}
-										else {
-											if (set[s].classList.contains(`color${e}`)) contains=true;
-										}
-									}
-									if (!contains) set[s].classList.remove('set');
-									newSet.push(document.querySelector(`[posX = "${setCoordinates[0]}"][posY = "${setCoordinates[1]-1}"]`))
-								} else if (setCoordinates[1] == i) set[s].classList.remove(`color${t}`);
+						let set = document.querySelectorAll('.set');
+						for (let s = set.length-1; s >= 0; s--) {
+							let setCoordinates = [set[s].getAttribute('posX'),set[s].getAttribute('posY')];
+
+							if (setCoordinates[1] > i) {
+								set[s].classList.remove('set',`color${set[s].getAttribute('color')}`);
+								let block = document.querySelector(`[posX = "${setCoordinates[0]}"][posY = "${+setCoordinates[1]-1}"]`);
+								block.classList.add('set',`color${set[s].getAttribute('color')}`);
+								block.setAttribute('color',set[s].getAttribute('color'));
+								set[s].removeAttribute('color');
 							}
-
-							for (let a = 0; a < newSet.length; a++) {
-								newSet[a].classList.add('set',`color${t}`);
-
-							}
+							
 						}
 						i--;
 					}
 				}
 			}
 		}
+
 		for (let n = 1; n < 11; n ++) {
 			if (document.querySelector(`[posX = "${n}"][posY = "15"]`).classList.contains('set')) {
 				clearInterval(interval);
@@ -426,25 +421,25 @@ function move() { // Функция сдвига фигуры на 1 клетк�
 				break;
 			}
 		}
-	if ((score>40)&&(level<2)) {
+	if ((score>10)&&(level<2)) {
 		level=2;
 		speed=400;
 		clearInterval(interval);
 		interval = setInterval(move,speed);
 		levelMonitor.value=level;
-	} else if ((score>100)&&(level<3)) {
+	} else if ((score>20)&&(level<3)) {
 		level=3;
 		speed=350;
 		clearInterval(interval);
 		interval = setInterval(move,speed);
 		levelMonitor.value=level;
-	} else if ((score>200)&&(level<4)) {
+	} else if ((score>60)&&(level<4)) {
 		level=4;
 		speed=300;
 		clearInterval(interval);
 		interval = setInterval(move,speed);
 		levelMonitor.value=level;
-	} else if ((score>400)&&(level<5)) {
+	} else if ((score>100)&&(level<5)) {
 		level=5;
 		speed=250;
 		clearInterval(interval);
@@ -489,14 +484,15 @@ window.addEventListener('keydown', function(e) { // Обработчик соб�
 
 		if (flag == true) {
 			for (let i = 0; i < figureBody.length; i++) {
-				figureBody[i].classList.remove(`color${currentFigure+1}`,'figure'); // Убираем стили старых точек
-				figureBody[i].style.backgroundColor = '';
+				figureBody[i].classList.remove('figure',`color${currentFigure}`); // Убираем стили старых точек
+				figureBody[i].removeAttribute('color',currentFigure);
 			}	
 
 			figureBody = figureNew;
 
 			for (let i = 0; i < figureBody.length; i++) {
-				figureBody[i].classList.add(`color${currentFigure+1}`,'figure'); // Даем стили новых точек
+				figureBody[i].classList.add('figure',`color${currentFigure}`); // Даем стили новых точек
+				figureBody[i].setAttribute('color',currentFigure);
 			}	
 		}
 	}
@@ -526,14 +522,16 @@ window.addEventListener('keydown', function(e) { // Обработчик соб�
 
 		if (flag == true) {
 			for (let i = 0; i < figureBody.length; i++) {
-				figureBody[i].classList.remove(`color${currentFigure+1}`,'figure'); // Убираем стили старых точек
+				figureBody[i].classList.remove('figure',`color${currentFigure}`); // Убираем стили старых точек
+				figureBody[i].removeAttribute('color',currentFigure);
 
 			}	
 
 			figureBody = figureNew;
 
 			for (let i = 0; i < figureBody.length; i++) {
-				figureBody[i].classList.add(`color${currentFigure+1}`,'figure'); // Даем стили новых точек
+				figureBody[i].classList.add('figure',`color${currentFigure}`); // Даем стили новых точек
+				figureBody[i].setAttribute('color',currentFigure);
 			}	
 
 			if (rotate<4) {rotate++;}
@@ -556,7 +554,7 @@ function createPreview () { //Функция создания фигуры
 
 
 	for (let i = 0; i < nextFigureBody.length; i++) { // Присваиваем класс, закрашивая фигуру
-		nextFigureBody[i].classList.add(`color${nextFigure+1}`,'set');
+		nextFigureBody[i].classList.add('figureicon',`color${nextFigure}`);
 	}
 }
 
@@ -565,4 +563,12 @@ function start() {
 	createPreview ();
 	interval = setInterval(move,speed);
 	document.getElementsByTagName('input')[0].style.display = 'none';
+}
+
+function reset() {
+	for (let y = 18; y > 0; y--) { // Присваиваем координаты каждой ячейке(точка 1,1 - левый нижний угол)
+		for (let x = 1; x < 11; x++) {
+			document.querySelector(`[posH = "${x}"][posV = "${y}"]`).className='excel';
+		}
+	}
 }
