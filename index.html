@@ -2,25 +2,31 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Тетрис</title>
 	<link rel="stylesheet" href="style.css">
 	<link rel="icon" href="favicon.ico" type="image/x-icon" />
 	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
-	
+	<link href="awesome/all.min.css" rel="stylesheet">
 </head>
 <body>
-	<input type="button" id="start" onclick="start()" value="Играть!" readonly>
 	<div class="main">
+		<input type="button" id="start" onclick="start()" value="Играть!" readonly>
 		
 	</div>
-	
+	<div class="keyboard">
+			<i class="fas fa-arrow-left" onclick="getNewState(-1);"></i>
+			<i class="fas fa-arrow-down" onclick="move();"></i>
+			<i class="fas fa-redo" onclick="coup();"></i>
+			<i class="fas fa-arrow-right" onclick="getNewState (1);"></i>
+		</div>
 	<div class="info">
 		<div class="preview">
 			
 		</div>
 
-		<p>Ваш счёт:</p><input type="text" readonly>
-		<span>Уровень: <input type="text" class="level" readonly></span>
+		<p>Ваш счёт:</p><input type="text" id="score" readonly>
+		<span>Уровень: <input type="text" id="level" readonly></span>
 		<ol>
 		</ol>
 	</div>
