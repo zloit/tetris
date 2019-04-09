@@ -126,16 +126,16 @@ li {
         background: transparent;
         margin: 0;
         width: 100vw;
-        opacity: 0.3;
     }
 
     .keyboard i {
         font-size: 20vw;
         margin: 0vw 2vw;
         height: 17vw;
+        opacity: 0.3;
         background: transparent;
     }
-
+    .keyboard i:active {opacity: 0.5;}
     .excel {
         width: 9vw;
         height: 9vw;

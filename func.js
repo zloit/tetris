@@ -624,6 +624,12 @@ function start() {
 	reset();
 	create(); 
 	createPreview ();
+	level=1;
+	levelMonitor.value=level;
+	score=0;
+	input.value = score;
+	speed=500;
+
 	interval = setInterval(move,speed);
 	running = true;
 	document.getElementById('start').style.display = 'none';
