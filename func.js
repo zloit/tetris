@@ -476,7 +476,7 @@ function move() { // Функция сдвига фигуры на 1 клетк�
 		interval = setInterval(move,speed);
 		levelMonitor.value=level;
 	} else if ((score>100)&&(level<8)) {
-		level=5;
+		level=8;
 		speed=100;
 		clearInterval(interval);
 		interval = setInterval(move,speed);
