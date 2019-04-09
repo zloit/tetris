@@ -116,7 +116,7 @@ li {
 
 @media screen and (max-width: 425px) {
     .main {
-        margin: 15vh 5vw;
+        margin: 7vh 5vw;
         width: 90vw;
         height: 126vw;
     }
@@ -143,10 +143,11 @@ li {
         height: 162vw;
     }
     .info {
+        position: absolute;
         border: none;
         margin: 1vw 5vw;
         width: 90vw;
-        height: 25vw;
+        height: auto;
     }
 
     .preview {display: none;}
